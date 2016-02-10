@@ -48,6 +48,13 @@ describe Contextuable do
   describe 'when required field is not supplied' do
     it { expect { Example1.new(name: 'hello') }.to raise_error(Contextuable::RequiredFieldNotPresent) }
   end
+
+  describe 'delegates [] to args' do
+    subject { Example1.new(name: 'hello', required: 'blabla', greeting: 'greeting') }
+    it { expect(subject[:greeting]).to eq subject.greeting }
+    it { expect(subject[:name]).to eq subject.name }
+  end
+
   describe 'defaults' do
     class Example2 < Contextuable
       defaults foo: :bar, bar: :foo
@@ -65,6 +72,36 @@ describe Contextuable do
       it { expect(subject.bar).to eq 'blabla' }
       it { expect(subject.bar?).to eq true }
       it { expect(subject.foo?).to eq true }
+    end
+  end
+
+  describe '::ensure_presence' do
+    class EnsurePresence < Contextuable
+      ensure_presence :foo
+    end
+    context 'not nil' do
+      subject { EnsurePresence.new(foo: :hello, bla: :bla) }
+      it { expect(subject.foo).to eq :hello }
+    end
+    context 'nil' do
+      subject { EnsurePresence.new(foo: nil, some: :thing) }
+      it { expect{ subject.foo }.to raise_error Contextuable::PresenceRequired }
+    end
+  end
+
+  describe 'Dynamic Assignment' do
+    class DynamicAssigment < Contextuable; end
+    subject { DynamicAssigment.new(foo: :hello, bla: :bla) }
+    before { subject.bar = :bar }
+    it '#bar=' do
+      expect(subject.bar).to eq :bar
+      expect(subject.bar?).to eq true
+    end
+
+    it '#to_h' do
+      expect(subject.to_h).to have_key :bar
+      expect(subject.to_h).to have_key :foo
+      expect(subject.to_h).to have_key :bla
     end
   end
 end
