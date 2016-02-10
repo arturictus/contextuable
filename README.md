@@ -22,7 +22,19 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+__Like an extended OpenStruct:__
+```ruby
+  context = Contextuable.new(name: 'John', surname: 'Doe')
+  context.name # => 'John'
+  context.name? # => true
+  context.surname # => 'Doe'
+  context.foo? # => false
+  context.foo = :bar
+  context.foo? # => true
+  context.foo # => :bar
+  context.to_h # => {:name=>"John", :surname=>"Doe", :foo=>:bar}
+```
+
 
 ## Development
 
@@ -38,4 +50,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
