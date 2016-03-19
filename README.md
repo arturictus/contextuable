@@ -56,7 +56,7 @@ i = Input.new(name: 'Hotel', city: 'Barcelona', address: 'Happy street', not_per
 i.types
 # => ["lodging"]
 i.long_name
-# => "Hotel,Happy street,Barcelona"
+# => "Hotel, Happy street, Barcelona"
 i.hotel_name
 # => "Hotel"
 i.phone_number_provided?

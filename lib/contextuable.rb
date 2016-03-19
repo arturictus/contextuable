@@ -1,9 +1,6 @@
-# require 'forwardable'
 class Contextuable
-  # extend Forwardable
-  # delegate :[], to: :args
-
   VERSION = "0.1.0"
+
   class RequiredFieldNotPresent < ArgumentError; end
   class PresenceRequired < ArgumentError; end
   class WrongArgument < ArgumentError; end
@@ -15,10 +12,6 @@ class Contextuable
 
     def ensure_presence(*names)
       @_presence_required = names.map(&:to_sym)
-    end
-
-    def ensure_presence(*names)
-      @_presence_required = names
     end
 
     def aliases(*names)
@@ -44,7 +37,7 @@ class Contextuable
     hash = hash.select{|k, v| _permitted.include?(k.to_sym) } if _only_permitted?
     @args = _defaults.merge(hash)
     args.each do |k, v|
-      define_special_method(k, v)
+      define_contextuable_method(k, v)
     end
   end
 
@@ -75,10 +68,10 @@ class Contextuable
 
   def set_attribute(key, value)
     args[key] = value
-    define_special_method(key, value)
+    define_contextuable_method(key, value)
   end
 
-  def define_special_method(key, value)
+  def define_contextuable_method(key, value)
     define_singleton_method(key) { args.fetch(key) }
     define_singleton_method("#{key}_provided?") { true }
     define_singleton_method("#{key}_not_provided?") { false }
@@ -130,11 +123,13 @@ class Contextuable
     unless hash.class <= Hash
       fail WrongArgument, "[Contextuable ERROR]: `#{self.class}` expects to receive an `Hash` or and object having `Hash` as ancestor."
     end
+
     _required_args.map(&:to_sym).each do |r|
       unless hash.keys.map(&:to_sym).include?(r)
         fail RequiredFieldNotPresent, "[Contextuable ERROR]: `#{self.class}` expect to be initialized with `#{r}` as an attribute."
       end
     end
+
     _presence_required.map(&:to_sym).each do |r|
       if hash[r].nil?
         fail PresenceRequired, "[Contextuable ERROR]: `#{self.class}` expects to receive an attribute named `#{r}` not beeing `nil`"
