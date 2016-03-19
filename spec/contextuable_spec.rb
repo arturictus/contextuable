@@ -10,7 +10,6 @@ describe Contextuable do
     aliases :hello, :greeting, :welcome
   end
 
-
   describe 'it behaves like OpenStruct' do
     subject! { Example1.new(name: 'hello', required: 'blabla', hello: 'hello') }
     context 'defines methods per instance' do
@@ -43,10 +42,6 @@ describe Contextuable do
     it { expect(subject.name).to eq 'hello' }
     it { expect(subject.name_provided?).to eq true }
     it { expect(subject.send(:_required_args)).to eq [:required] }
-  end
-
-  describe 'when required field is not supplied' do
-    it { expect { Example1.new(name: 'hello') }.to raise_error(Contextuable::RequiredFieldNotPresent) }
   end
 
   describe 'delegates [] to args' do
@@ -93,20 +88,6 @@ describe Contextuable do
       before { subject.not_present = :now_is_present }
       it { expect(subject.not_present_not_provided?).to eq false }
       it { expect(subject.not_present_provided?).to eq true }
-    end
-  end
-
-  describe '::ensure_presence' do
-    class EnsurePresence < Contextuable
-      ensure_presence :foo
-    end
-    context 'not nil' do
-      subject { EnsurePresence.new(foo: :hello, bla: :bla) }
-      it { expect(subject.foo).to eq :hello }
-    end
-    context 'nil' do
-      subject { EnsurePresence.new(foo: nil, some: :thing) }
-      it { expect{ subject.foo }.to raise_error Contextuable::PresenceRequired }
     end
   end
 

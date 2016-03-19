@@ -6,6 +6,8 @@ class Contextuable
   VERSION = "0.1.0"
   class RequiredFieldNotPresent < ArgumentError; end
   class PresenceRequired < ArgumentError; end
+  class WrongArgument < ArgumentError; end
+
   class << self
     def required(*names)
       @_required = names.map(&:to_sym)
@@ -38,9 +40,7 @@ class Contextuable
   alias_method :to_hash, :args
 
   def initialize(hash = {})
-    fail ArgumentError unless hash.respond_to?(:fetch)
-    fail RequiredFieldNotPresent unless _required_args.map(&:to_sym).all? { |r| hash.keys.map(&:to_sym).include?(r) }
-    fail PresenceRequired if _presence_required.map(&:to_sym).any? { |r| hash[r].nil? }
+    check_input_errors(hash)
     hash = hash.select{|k, v| _permitted.include?(k.to_sym) } if _only_permitted?
     @args = _defaults.merge(hash)
     args.each do |k, v|
@@ -124,5 +124,21 @@ class Contextuable
 
   def _required_args
     self.class.instance_variable_get(:@_required) || []
+  end
+
+  def check_input_errors(hash)
+    unless hash.class <= Hash
+      fail WrongArgument, "[Contextuable ERROR]: `#{self.class}` expects to receive an `Hash` or and object having `Hash` as ancestor."
+    end
+    _required_args.map(&:to_sym).each do |r|
+      unless hash.keys.map(&:to_sym).include?(r)
+        fail RequiredFieldNotPresent, "[Contextuable ERROR]: `#{self.class}` expect to be initialized with `#{r}` as an attribute."
+      end
+    end
+    _presence_required.map(&:to_sym).each do |r|
+      if hash[r].nil?
+        fail PresenceRequired, "[Contextuable ERROR]: `#{self.class}` expects to receive an attribute named `#{r}` not beeing `nil`"
+      end
+    end
   end
 end
