@@ -42,7 +42,7 @@ describe Contextuable do
     end
     it { expect(subject.name).to eq 'hello' }
     it { expect(subject.name_provided?).to eq true }
-    it { expect(subject._required_args).to eq [:required] }
+    it { expect(subject.send(:_required_args)).to eq [:required] }
   end
 
   describe 'when required field is not supplied' do
@@ -81,8 +81,8 @@ describe Contextuable do
 
   describe 'helper methods for provided' do
     subject { Contextuable.new(name: 'hello', foo: 'foo', other_thing: :thing) }
-    it { expect(subject.hello_not_provided?).to eq false }
-    it { expect(subject.hello_provided?).to eq true }
+    it { expect(subject.hello_not_provided?).to eq true }
+    it { expect(subject.hello_provided?).to eq false }
     it { expect(subject.foo_not_provided?).to eq false }
     it { expect(subject.foo_provided?).to eq true }
     it { expect(subject.other_thing_not_provided?).to eq false }
@@ -125,5 +125,15 @@ describe Contextuable do
       expect(subject.to_h).to have_key :foo
       expect(subject.to_h).to have_key :bla
     end
+  end
+  describe 'Permit' do
+    class Permit < Contextuable
+      permit :foo, :hello
+    end
+    subject { Permit.new(foo: :hello, bla: :bla) }
+    it { expect(subject.foo).to eq :hello }
+    it { expect(subject.foo_provided?).to be true }
+    it { expect(subject.bla).to be nil }
+    it { expect(subject.bla_provided?).to be false }
   end
 end

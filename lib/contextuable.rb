@@ -8,7 +8,11 @@ class Contextuable
   class PresenceRequired < ArgumentError; end
   class << self
     def required(*names)
-      @_required = names
+      @_required = names.map(&:to_sym)
+    end
+
+    def ensure_presence(*names)
+      @_presence_required = names.map(&:to_sym)
     end
 
     def ensure_presence(*names)
@@ -23,6 +27,10 @@ class Contextuable
     def defaults(hash)
       @_defaults = hash
     end
+
+    def permit(*names)
+      @_permitted = names.map(&:to_sym)
+    end
   end
 
   attr_reader :args
@@ -33,12 +41,10 @@ class Contextuable
     fail ArgumentError unless hash.respond_to?(:fetch)
     fail RequiredFieldNotPresent unless _required_args.map(&:to_sym).all? { |r| hash.keys.map(&:to_sym).include?(r) }
     fail PresenceRequired if _presence_required.map(&:to_sym).any? { |r| hash[r].nil? }
+    hash = hash.select{|k, v| _permitted.include?(k.to_sym) } if _only_permitted?
     @args = _defaults.merge(hash)
     args.each do |k, v|
       define_special_method(k, v)
-      # define_singleton_method(k) { args.fetch(k) }
-      # define_singleton_method("#{k}?") { true }
-      # define_singleton_method("not_#{k}?") { false }
     end
   end
 
@@ -94,6 +100,14 @@ class Contextuable
       break if out
     end
     out
+  end
+
+  def _only_permitted?
+    _permitted.any?
+  end
+
+  def _permitted
+    self.class.instance_variable_get(:@_permitted) || []
   end
 
   def _equivalents
