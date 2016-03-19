@@ -1,8 +1,6 @@
 # Contextuable
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/contextuable`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Better Structs for many applications.
 
 ## Installation
 
@@ -22,7 +20,8 @@ Or install it yourself as:
 
 ## Usage
 
-__Like an extended OpenStruct:__
+__Extended OpenStruct:__
+
 ```ruby
   context = Contextuable.new(name: 'John', surname: 'Doe')
   context.name # => 'John'
@@ -35,6 +34,102 @@ __Like an extended OpenStruct:__
   context.to_h # => {:name=>"John", :surname=>"Doe", :foo=>:bar}
 ```
 
+_more complex example_
+```ruby
+class Input < Contextuable
+  permit  :name, :city, :address, :phone_number, :free_text, :country_code,
+    :country, :zip, :types
+  defaults types: ['lodging']
+  aliases :name, :hotel_name
+  aliases :phone_number, :telephone
+
+  def long_name
+    [name, address, city].join(', ')
+  end
+
+  def types
+    Array.wrap(args[:types])
+  end
+end
+
+i = Input.new(name: 'Hotel', city: 'Barcelona', address: 'Happy street', not_permitted: 'dangerous')
+i.types
+# => ["lodging"]
+i.long_name
+# => "Hotel,Happy street,Barcelona"
+i.hotel_name
+# => "Hotel"
+i.phone_number?
+# => false
+i.not_permitted
+# => nil
+```
+
+### Building better Structs
+
+**required**
+```ruby
+class Example < Contextuable
+  required :required_arg
+end
+
+Example.new(foo: :bar)
+#=> Error Contextuable::RequiredFieldNotPresent
+```
+
+**aliases**
+```ruby
+class Example < Contextuable
+  aliases :hello, :greeting, :welcome
+end
+ex = Example.new(hello: 'Hey!')
+# => #<Example:0x007fd88ba30398 @args={:hello=>"Hey!"}>
+ex.hello
+# => "Hey!"
+ex.greeting
+# => "Hey!"
+ex.welcome
+# => "Hey!"
+```
+
+**defaults**
+```ruby
+class Example2 < Contextuable
+  defaults foo: :bar, bar: :foo
+end
+ex = Example2.new
+ex.foo
+ => :bar
+ex.bar
+ => :foo
+ex2 = Example2.new(foo: 'something', bar: true)
+ex2.foo
+ => 'something'
+ex2.bar
+ => true
+```
+
+**ensure_presence**
+```ruby
+class EnsurePresence < Contextuable
+  ensure_presence :foo
+end
+EnsurePresence.new(hello: 'asdf')
+#=> Error: Contextuable::PresenceRequired
+
+EnsurePresence.new(foo: nil)
+#=> Error: Contextuable::PresenceRequired
+
+EnsurePresence.new(foo: '').foo #=> ""
+```
+
+**permit**
+```ruby
+per = Permit.new(foo: :bar, hello: 'Hey!', bar: 'bla', yuju: 'dangerous')
+ => #<Permit:0x007fd88b9dd878 @args={:foo=>:bar, :hello=>"Hey!"}>
+per.foo #=> :bar
+per.yuju #=> nil
+```
 
 ## Development
 
@@ -44,7 +139,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/contextuable. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/arturictus/contextuable. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
 ## License
