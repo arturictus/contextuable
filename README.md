@@ -26,11 +26,11 @@ __Like an extended OpenStruct:__
 ```ruby
   context = Contextuable.new(name: 'John', surname: 'Doe')
   context.name # => 'John'
-  context.name? # => true
+  context.name_provided? # => true
   context.surname # => 'Doe'
-  context.foo? # => false
+  context.foo_provided? # => false
   context.foo = :bar
-  context.foo? # => true
+  context.foo_provided? # => true
   context.foo # => :bar
   context.to_h # => {:name=>"John", :surname=>"Doe", :foo=>:bar}
 ```

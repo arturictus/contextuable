@@ -16,7 +16,7 @@ describe Contextuable do
     context 'defines methods per instance' do
       let(:obj) { Example1.new(hello: 'blabla', required: 'blabla') }
       it { expect(obj.name).to eq nil }
-      it { expect(obj.name?).to eq false }
+      it { expect(obj.name_provided?).to eq false }
     end
     describe 'equivalents' do
       describe '#find_in_equivalents' do
@@ -41,7 +41,7 @@ describe Contextuable do
       end
     end
     it { expect(subject.name).to eq 'hello' }
-    it { expect(subject.name?).to eq true }
+    it { expect(subject.name_provided?).to eq true }
     it { expect(subject._required_args).to eq [:required] }
   end
 
@@ -63,15 +63,36 @@ describe Contextuable do
       subject { Example2.new({}) }
       it { expect(subject.foo).to eq :bar }
       it { expect(subject.bar).to eq :foo }
-      it { expect(subject.bar?).to eq true }
-      it { expect(subject.foo?).to eq true }
+      it { expect(subject.bar_provided?).to eq true }
+      it { expect(subject.bar_not_provided?).to eq false }
+      it { expect(subject.foo_provided?).to eq true }
+      it { expect(subject.foo_not_provided?).to eq false }
     end
     describe 'overriding' do
       subject { Example2.new({ foo: :hello, bar: 'blabla' }) }
       it { expect(subject.foo).to eq :hello }
       it { expect(subject.bar).to eq 'blabla' }
-      it { expect(subject.bar?).to eq true }
-      it { expect(subject.foo?).to eq true }
+      it { expect(subject.bar_provided?).to eq true }
+      it { expect(subject.bar_not_provided?).to eq false }
+      it { expect(subject.foo_provided?).to eq true }
+      it { expect(subject.foo_not_provided?).to eq false }
+    end
+  end
+
+  describe 'helper methods for provided' do
+    subject { Contextuable.new(name: 'hello', foo: 'foo', other_thing: :thing) }
+    it { expect(subject.hello_not_provided?).to eq false }
+    it { expect(subject.hello_provided?).to eq true }
+    it { expect(subject.foo_not_provided?).to eq false }
+    it { expect(subject.foo_provided?).to eq true }
+    it { expect(subject.other_thing_not_provided?).to eq false }
+    it { expect(subject.other_thing_provided?).to eq true }
+    it { expect(subject.not_present_not_provided?).to eq true }
+    it { expect(subject.not_present_provided?).to eq false }
+    describe 'setting elements inline' do
+      before { subject.not_present = :now_is_present }
+      it { expect(subject.not_present_not_provided?).to eq false }
+      it { expect(subject.not_present_provided?).to eq true }
     end
   end
 
@@ -95,7 +116,8 @@ describe Contextuable do
     before { subject.bar = :bar }
     it '#bar=' do
       expect(subject.bar).to eq :bar
-      expect(subject.bar?).to eq true
+      expect(subject.bar_provided?).to eq true
+      expect(subject.bar_not_provided?).to eq false
     end
 
     it '#to_h' do

@@ -58,10 +58,10 @@ class Contextuable
       key = name.to_s.gsub('=', '').to_sym
       set_attribute(key, value)
     else
-      # if name.to_s =~ /\Anot_.?\z/
-        name.to_s.include?('?') ? false : nil
-      # else
-      # end
+      case name.to_s
+      when /\A\w+_not_provided\?\z/ then true
+      when /\A\w+_provided\?\z/ then false
+      end
     end
   end
 
@@ -74,8 +74,8 @@ class Contextuable
 
   def define_special_method(key, value)
     define_singleton_method(key) { args.fetch(key) }
-    define_singleton_method("#{key}?") { true }
-    define_singleton_method("not_#{key}?") { false }
+    define_singleton_method("#{key}_provided?") { true }
+    define_singleton_method("#{key}_not_provided?") { false }
   end
 
   def find_in_equivalents(name)
