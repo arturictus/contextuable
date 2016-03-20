@@ -28,8 +28,10 @@ __Extended OpenStruct:__
   context.name_provided? # => true
   context.surname # => 'Doe'
   context.foo_provided? # => false
+  context.foo_not_provided? # => true
   context.foo = :bar
   context.foo_provided? # => true
+  context.foo_not_provided? # => false
   context.foo # => :bar
   context.to_h # => {:name=>"John", :surname=>"Doe", :foo=>:bar}
 ```
@@ -57,6 +59,8 @@ i.types
 # => ["lodging"]
 i.long_name
 # => "Hotel, Happy street, Barcelona"
+i.name
+# => "Hotel"
 i.hotel_name
 # => "Hotel"
 i.phone_number_provided?
@@ -99,14 +103,18 @@ class Example2 < Contextuable
 end
 ex = Example2.new
 ex.foo
- => :bar
+# => :bar
 ex.bar
- => :foo
+# => :foo
+ex.foo = :hello
+ex.foo
+# => :hello
+
 ex2 = Example2.new(foo: 'something', bar: true)
 ex2.foo
- => 'something'
+# => 'something'
 ex2.bar
- => true
+# => true
 ```
 
 **ensure_presence**
