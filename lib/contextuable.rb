@@ -1,5 +1,5 @@
 class Contextuable
-  VERSION = "0.1.0"
+  VERSION = "0.2.0"
 
   class RequiredFieldNotPresent < ArgumentError; end
   class PresenceRequired < ArgumentError; end
