@@ -5,14 +5,20 @@ class Contextuable
   class PresenceRequired < ArgumentError; end
   class WrongArgument < ArgumentError; end
 
-  class << self
+  def self.inherited(subclass)
+    subclass.extend ClassMethods
+  end
+  module ClassMethods
     def required(*names)
       @_required = names.map(&:to_sym)
     end
 
     def without_undefined_readers
       @_without_undefined_readers = true
-      self
+    end
+
+    def open_struct_behavior
+      @_without_undefined_readers = false
     end
 
     def ensure_presence(*names)
@@ -119,7 +125,7 @@ class Contextuable
   end
 
   def _without_undefined_readers
-    _get_config(:@_without_undefined_readers)
+    !_get_config(:@_without_undefined_readers) == false
   end
 
   def _defaults

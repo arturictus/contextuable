@@ -31,8 +31,8 @@ describe 'ERRORS' do
 
   describe 'WrongArgument' do
     it do
-      message = '[Contextuable ERROR]: `Contextuable` expects to receive an `Hash` or and object having `Hash` as ancestor.'
-      expect{ Contextuable.new(nil) }.to raise_error Contextuable::WrongArgument, message
+      # message = '[Contextuable ERROR]: `Contextuable` expects to receive an `Hash` or and object having `Hash` as ancestor.'
+      expect{ Contextuable.new(nil) }.to raise_error Contextuable::WrongArgument#, message
     end
   end
 end
