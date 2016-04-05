@@ -1,5 +1,10 @@
 # Contextuable
 
+[![Gem Version](https://badge.fury.io/rb/contextuable.svg)](http://badge.fury.io/rb/contextuable)
+[![](https://img.shields.io/gem/dt/contextuable.svg?style=flat)](https://rubygems.org/gems/contextuable)
+[![Code Climate](https://codeclimate.com/github/arturictus/contextuable/badges/gpa.svg)](https://codeclimate.com/github/arturictus/contextuable)
+
+
 Better Structs for many applications.
 
 ## Installation
