@@ -71,6 +71,15 @@ i.not_permitted
 
 ### Building better Structs
 
+**no_method_error**
+```ruby
+class Example < Contextuable
+  no_method_error
+end
+
+Example.new(foo: :bar).hello # => Error: NoMethodError
+```
+
 **required**
 ```ruby
 class Example < Contextuable
