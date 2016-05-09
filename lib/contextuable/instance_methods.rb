@@ -17,7 +17,9 @@ class Contextuable
       else
         out = provided_macro(name)
         return out[:out] if out
-        raise NoMethodError if _no_method_error
+        if _no_method_error
+          raise NoMethodError, "Method not found for #{self.class}: `#{name}`"
+        end
       end
     end
 
