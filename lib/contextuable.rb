@@ -37,9 +37,10 @@ class Contextuable
   def method_missing(name, *args, &block)
     if name =~ /\A\w+=\z/
       set_attribute_macro(name, *args, &block)
+    elsif out = provided_macro(name)
+      out[:out]
     else
-      out = provided_macro(name)
-      out ? out[:out] : nil
+      super
     end
   end
 

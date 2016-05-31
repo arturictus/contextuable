@@ -14,6 +14,6 @@ describe 'NoMethodError' do
   context 'default behavior' do
     subject { Contextuable.new(foo: :foo, bar: :bar) }
     it { expect(subject.foo).to eq :foo }
-    it { expect(subject.bla).to be_nil }
+    it { expect { subject.bla }.to raise_error NoMethodError }
   end
 end

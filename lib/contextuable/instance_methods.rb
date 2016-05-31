@@ -18,7 +18,8 @@ class Contextuable
         out = provided_macro(name)
         return out[:out] if out
         if _no_method_error
-          raise NoMethodError, "Method not found for #{self.class}: `#{name}`"
+          super
+          # raise NoMethodError, "Method not found for #{self.class}: `#{name}`"
         end
       end
     end
@@ -58,7 +59,7 @@ class Contextuable
     end
 
     def _no_method_error
-      !_get_config[:no_method_error] == false
+      _get_config[:no_method_error].nil? ? true : _get_config[:no_method_error]
     end
 
     def _defaults
