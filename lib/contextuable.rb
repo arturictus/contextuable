@@ -1,5 +1,5 @@
 class Contextuable
-  VERSION = "0.3.0"
+  VERSION = "0.4.0"
   autoload :ClassMethods, 'contextuable/class_methods'
   autoload :InstanceMethods, 'contextuable/instance_methods'
 
