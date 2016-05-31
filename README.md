@@ -66,7 +66,7 @@ i.hotel_name
 i.phone_number_provided?
 # => false
 i.not_permitted
-# => nil
+# => NoMethodError: undefined method
 ```
 
 ### Building better Structs
@@ -74,10 +74,18 @@ i.not_permitted
 **no_method_error**
 ```ruby
 class Example < Contextuable
+  no_method_error false
+end
+
+Example.new(foo: :bar).hello # => nil
+```
+
+```ruby
+class Example < Contextuable
   no_method_error
 end
 
-Example.new(foo: :bar).hello # => Error: NoMethodError
+Example.new(foo: :bar).hello # => => NoMethodError: undefined method
 ```
 
 **required**
