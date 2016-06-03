@@ -1,7 +1,10 @@
+require 'contextuable/class_methods'
+require 'contextuable/instance_methods'
+require 'contextuable/helpers'
+
 class Contextuable
   VERSION = "0.4.0"
-  autoload :ClassMethods, 'contextuable/class_methods'
-  autoload :InstanceMethods, 'contextuable/instance_methods'
+  include Helpers
 
   class RequiredFieldNotPresent < ArgumentError; end
   class PresenceRequired < ArgumentError; end
@@ -20,14 +23,14 @@ class Contextuable
     unless hash.class <= Hash
       fail WrongArgument, "[Contextuable ERROR]: `#{self.class}` expects to receive a `Hash` or and object having `Hash` as ancestor."
     end
-    @attrs = hash
+    @attrs = transform_keys(hash){ |k| k.to_s }
     @attrs.each do |k, v|
       define_contextuable_method(k, v)
     end
   end
 
   def [](key)
-    attrs[key]
+    attrs[key.to_s]
   end
 
   def []=(key, value)
@@ -44,11 +47,15 @@ class Contextuable
     end
   end
 
+  def get_attribute(key)
+
+  end
+
   private
 
   def set_attribute_macro(name, *args, &block)
     value = args.first || block
-    key = name.to_s.gsub('=', '').to_sym
+    key = name.to_s.gsub('=', '')
     set_attribute(key, value)
   end
 
@@ -69,4 +76,6 @@ class Contextuable
     define_singleton_method("#{key}_provided?") { true }
     define_singleton_method("#{key}_not_provided?") { false }
   end
+
+
 end
