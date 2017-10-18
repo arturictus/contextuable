@@ -1,4 +1,6 @@
 # Contextuable
+# This gem has been renamed to Dystruct
+# the new repo is: https://github.com/arturictus/dystruct
 
 Better Structs for many applications.
 
