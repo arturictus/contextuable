@@ -2,6 +2,13 @@
 # This gem has been renamed to Dystruct
 # the new repo is: https://github.com/arturictus/dystruct
 
+[![Build Status](https://travis-ci.org/ryanfox1985/contextuable.svg?branch=master)](https://travis-ci.org/ryanfox1985/contextuable)
+[![Gem Version](https://badge.fury.io/rb/contextuable.svg)](http://badge.fury.io/rb/contextuable)
+[![](https://img.shields.io/gem/dt/contextuable.svg?style=flat)](https://rubygems.org/gems/contextuable)
+[![Coverage Status](https://coveralls.io/repos/github/ryanfox1985/contextuable/badge.svg?branch=master)](https://coveralls.io/github/ryanfox1985/contextuable?branch=master)
+[![Code Climate](https://codeclimate.com/github/arturictus/contextuable/badges/gpa.svg)](https://codeclimate.com/github/arturictus/contextuable)
+
+
 Better Structs for many applications.
 
 ## Installation
